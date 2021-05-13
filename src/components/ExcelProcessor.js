@@ -6,20 +6,19 @@ import {
     Stack,
     InputLeftAddon,
 } from "@chakra-ui/react";
-import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, Button } from "@chakra-ui/react";
 import ExcelReader from "./ExcelReader";
 
 const ExcelProcessor = ({ parentData, parentSetData }) => {
     const [rawData, setRawData] = useState();
     const [data, setData] = useState([]);
+    const [year, setYear] = useState("20-21");
+    const [eventName, setEventName] = useState({});
 
     const handleFileChange = (data) => {
         setRawData(data);
     }
 
-    useEffect(() => {
-        parentSetData({ ...parentData, data: data });
-    }, [data])
 
     useEffect(() => {
         if (rawData === undefined || rawData.length === 0) return;
@@ -34,6 +33,7 @@ const ExcelProcessor = ({ parentData, parentSetData }) => {
                 newData.push(object);
             }
             setData(newData);
+            parentSetData({ ...parentData, data: newData });
         }
     }, [rawData])
     return (
@@ -41,14 +41,15 @@ const ExcelProcessor = ({ parentData, parentSetData }) => {
             <Stack spacing={4}>
                 <InputGroup size="lg">
                     <InputLeftAddon children="今年年度" />
-                    <Input placeholder="今年年度" defaultValue="20-21" onChange={(event) => parentSetData({ ...parentData, year: event.target.value })} />
+                    <Input placeholder="今年年度" defaultValue="20-21" onChange={(event) => setYear(event.target.value)} />
                 </InputGroup>
 
                 <InputGroup size="lg">
-                    <Input placeholder="活動名稱第一行" defaultValue="22-23長期outbound研習會" size="lg" onChange={(event) => parentSetData({ ...parentData, event_name_1: event.target.value })} />
-                    <Input placeholder="活動名稱第二行" defaultValue="英文PPT簡報" size="lg" onChange={(event) => parentSetData({ ...parentData, event_name_2: event.target.value })} />
+                    <Input placeholder="活動名稱第一行" defaultValue="22-23長期outbound研習會" size="lg" onChange={(event) => setEventName({ ...eventName, lineOne: event.target.value })} />
+                    <Input placeholder="活動名稱第二行" defaultValue="英文PPT簡報" size="lg" onChange={(event) => setEventName({ ...eventName, lineTwo: event.target.value })} />
                 </InputGroup>
                 <ExcelReader handleFileChange={handleFileChange} />
+                <Button colorScheme="teal" onClick={() => { parentSetData({ ...parentData, data: data, year: year, event_name_1: eventName.lineOne, event_name_2: eventName.lineTwo }) }}>Update</Button>
                 <Table variant="striped" colorScheme="teal">
                     <Thead>
                         <Tr>
@@ -62,7 +63,7 @@ const ExcelProcessor = ({ parentData, parentSetData }) => {
                         {data.map((obj, idx) => (
                             <Tr>
                                 <Td>
-                                    <Input id={idx} key={"年度" + idx} placeholder="年度" defaultValue={obj["年度"]}
+                                    <Input placeholder="年度" defaultValue={obj["年度"]}
                                         onChange={
                                             (event) => {
                                                 setData([...data].map((innerObj, innerIdx) => {
@@ -78,7 +79,7 @@ const ExcelProcessor = ({ parentData, parentSetData }) => {
                                     />
                                 </Td>
                                 <Td>
-                                    <Input id={idx} key={"派遣國家" + idx} placeholder="派遣國家" defaultValue={obj["派遣國家"]}
+                                    <Input placeholder="派遣國家" defaultValue={obj["派遣國家"]}
                                         onChange={
                                             (event) => {
                                                 setData([...data].map((innerObj, innerIdx) => {
@@ -94,7 +95,7 @@ const ExcelProcessor = ({ parentData, parentSetData }) => {
                                     />
                                 </Td>
                                 <Td>
-                                    <Input id={idx} key={"中文姓名" + idx} placeholder="中文姓名" defaultValue={obj["中文姓名"]}
+                                    <Input placeholder="中文姓名" defaultValue={obj["中文姓名"]}
                                         onChange={
                                             (event) => {
                                                 setData([...data].map((innerObj, innerIdx) => {
@@ -110,7 +111,7 @@ const ExcelProcessor = ({ parentData, parentSetData }) => {
                                     />
                                 </Td>
                                 <Td>
-                                    <Input id={idx} key={"英文名" + idx} placeholder="英文名" defaultValue={obj["英文名"]}
+                                    <Input placeholder="英文名" defaultValue={obj["英文名"]}
                                         onChange={
                                             (event) => {
                                                 setData([...data].map((innerObj, innerIdx) => {

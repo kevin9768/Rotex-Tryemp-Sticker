@@ -8,9 +8,6 @@ const ExcelReader = ({ handleFileChange }) => {
     const [data, setData] = useState([]);
     const [cols, setCols] = useState([]);
 
-    useEffect(() => {
-        handleFileChange(data);
-    }, [data])
 
     const handleChange = (e) => {
         const files = e.target.files;
@@ -35,6 +32,7 @@ const ExcelReader = ({ handleFileChange }) => {
             });
             /* Update state */
             setData(new_data);
+            handleFileChange(new_data);
             setCols(make_cols(ws['!ref']));
 
         };
